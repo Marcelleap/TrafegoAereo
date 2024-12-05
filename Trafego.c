@@ -49,7 +49,7 @@ typedef struct
 void aviao(int readfd, int writefd);
 void requisicao(int readfd, int writefd);
 void handle_sigint(int sig);       // interrupção do usuário
-void *thread_function(void *args); // Função da thread
+void thread_function(void *args); // Função da thread
 void iniciar_contador();
 
 // Variáveis globais
@@ -255,7 +255,7 @@ void requisicao(int readfd, int writefd)
             else
             {
                 snprintf(aviao.permissao, sizeof(aviao.permissao), "Negado");
-                printf("Torre: Pouso negado para avião %d. Aeroporto lotado.2 Aviões no aeroporto: %d\n",
+                printf("Torre: Pouso negado para avião %d. Aeroporto lotado. Aviões no aeroporto: %d\n",
                        aviao.id, avioes_no_aeroporto);
             }
         }
@@ -301,8 +301,8 @@ void requisicao(int readfd, int writefd)
             pthread_mutex_unlock(&contador_mutex);
         }
 
-        // Aguarda 10 segundos antes de processar a próxima solicitação
-        sleep(5);
+        // Aguarda 3 segundos antes de processar a próxima solicitação
+        sleep(4);
     }
 
     // Verificação de erro
@@ -313,7 +313,7 @@ void requisicao(int readfd, int writefd)
 }
 
 // Função que monitora as estatísticas do aeroporto
-void *thread_function(void *args)
+void thread_function(void *args)
 {
     ThreadArgs *threadArgs = (ThreadArgs *)args; // Argumentos da thread
 
@@ -334,7 +334,7 @@ void *thread_function(void *args)
         sleep(10); // Aguarda 10 segundos antes de imprimir as estatísticas novamente
     }
     free(args);
-    return NULL; // Retorna NULL
+    //return NULL; // Retorna NULL
 }
 
 // Handle no caso de interrupção (CTRL + C)
@@ -366,7 +366,7 @@ void iniciar_contador()
     args->contador_decolagens = 0;                 // Parâmetro 2
 
     // Cria a thread
-    if (pthread_create(&monitor_thread, NULL, thread_function, args) != 0)
+    if (pthread_create(&monitor_thread, NULL, (void *) thread_function, args) != 0)
     {
         perror("Erro ao criar thread de monitoramento"); // Erro ao criar a thread
         free(args);                                      // Libera a memória alocada
